@@ -50,5 +50,19 @@ export function importJSON(file) {
           return reject(new Error('JSON must be an array of records.'));
         }
         const required = ['id', 'title', 'dueDate', 'duration', 'tag'];
-        for (const rec of data)
-            
+        for (const rec of data) {
+          for (const field of required) {
+            if (!(field in rec)) {
+              return reject(new Error(`Record missing field: "${field}"`));
+            }
+          }
+        }
+        resolve(data);
+      } catch (err) {
+        reject(new Error('Invalid JSON file.'));
+      }
+    };
+    reader.onerror = () => reject(new Error('Could not read file.'));
+    reader.readAsText(file);
+  });
+}
