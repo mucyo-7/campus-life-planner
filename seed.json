@@ -1,0 +1,110 @@
+[
+  {
+    "id": "rec_0001",
+    "title": "Study for Math exam",
+    "dueDate": "2025-10-15",
+    "duration": 120,
+    "tag": "Study",
+    "createdAt": "2025-10-01T08:00:00.000Z",
+    "updatedAt": "2025-10-01T08:00:00.000Z"
+  },
+  {
+    "id": "rec_0002",
+    "title": "Submit Programming assignment",
+    "dueDate": "2025-10-08",
+    "duration": 90,
+    "tag": "Assignment",
+    "createdAt": "2025-10-01T09:00:00.000Z",
+    "updatedAt": "2025-10-01T09:00:00.000Z"
+  },
+  {
+    "id": "rec_0003",
+    "title": "ALU Leadership summit",
+    "dueDate": "2025-10-20",
+    "duration": 180,
+    "tag": "Event",
+    "createdAt": "2025-10-02T10:00:00.000Z",
+    "updatedAt": "2025-10-02T10:00:00.000Z"
+  },
+  {
+    "id": "rec_0004",
+    "title": "Review lecture notes",
+    "dueDate": "2025-10-05",
+    "duration": 45,
+    "tag": "Study",
+    "createdAt": "2025-10-02T11:00:00.000Z",
+    "updatedAt": "2025-10-02T11:00:00.000Z"
+  },
+  {
+    "id": "rec_0005",
+    "title": "Team project meeting",
+    "dueDate": "2025-10-10",
+    "duration": 60,
+    "tag": "Meeting",
+    "createdAt": "2025-10-03T07:30:00.000Z",
+    "updatedAt": "2025-10-03T07:30:00.000Z"
+  },
+  {
+    "id": "rec_0006",
+    "title": "Read economics chapter",
+    "dueDate": "2025-10-12",
+    "duration": 75,
+    "tag": "Study",
+    "createdAt": "2025-10-03T12:00:00.000Z",
+    "updatedAt": "2025-10-03T12:00:00.000Z"
+  },
+  {
+    "id": "rec_0007",
+    "title": "Laundry and room clean",
+    "dueDate": "2025-10-06",
+    "duration": 30,
+    "tag": "Personal",
+    "createdAt": "2025-10-04T06:00:00.000Z",
+    "updatedAt": "2025-10-04T06:00:00.000Z"
+  },
+  {
+    "id": "rec_0008",
+    "title": "Data structures quiz prep",
+    "dueDate": "2025-10-09",
+    "duration": 150,
+    "tag": "Study",
+    "createdAt": "2025-10-04T14:00:00.000Z",
+    "updatedAt": "2025-10-04T14:00:00.000Z"
+  },
+  {
+    "id": "rec_0009",
+    "title": "Advisor check-in meeting",
+    "dueDate": "2025-10-11",
+    "duration": 30,
+    "tag": "Meeting",
+    "createdAt": "2025-10-05T09:00:00.000Z",
+    "updatedAt": "2025-10-05T09:00:00.000Z"
+  },
+  {
+    "id": "rec_0010",
+    "title": "Essay draft for humanities",
+    "dueDate": "2025-10-18",
+    "duration": 200,
+    "tag": "Assignment",
+    "createdAt": "2025-10-05T15:00:00.000Z",
+    "updatedAt": "2025-10-05T15:00:00.000Z"
+  },
+  {
+    "id": "rec_0011",
+    "title": "Gym session",
+    "dueDate": "2025-10-07",
+    "duration": 60,
+    "tag": "Personal",
+    "createdAt": "2025-10-06T06:00:00.000Z",
+    "updatedAt": "2025-10-06T06:00:00.000Z"
+  },
+  {
+    "id": "rec_0012",
+    "title": "Career fair preparation",
+    "dueDate": "2025-10-25",
+    "duration": 90,
+    "tag": "Event",
+    "createdAt": "2025-10-06T10:00:00.000Z",
+    "updatedAt": "2025-10-06T10:00:00.000Z"
+  }
+]
