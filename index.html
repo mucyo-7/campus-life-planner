@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Campus Life Planner</title>
+  <link rel="stylesheet" href="styles/main.css" />
+  <link rel="stylesheet" href="styles/dashboard.css" />
+</head>
+<body>
+
+  <!-- Skip to content link for keyboard users -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- ARIA live regions -->
+  <div role="status" aria-live="polite" aria-atomic="true" id="status-msg" class="sr-only"></div>
+  <div role="alert" aria-live="assertive" aria-atomic="true" id="alert-msg" class="sr-only"></div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon" aria-hidden="true">📅</span>
+        <span class="logo-text">Campus Planner</span>
+      </div>
+      <nav aria-label="Main navigation">
+        <ul class="nav-list" role="list">
+          <li><a href="#" class="nav-link active" data-page="dashboard" aria-current="page">Dashboard</a></li>
+          <li><a href="#" class="nav-link" data-page="records">Records</a></li>
+          <li><a href="#" class="nav-link" data-page="add">Add Task</a></li>
+          <li><a href="#" class="nav-link" data-page="settings">Settings</a></li>
+          <li><a href="#" class="nav-link" data-page="about">About</a></li>
+        </ul>
+      </nav>
+      <button class="menu-toggle" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-list">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main id="main-content">
+
+    <!-- ===== DASHBOARD PAGE ===== -->
+    <section id="page-dashboard" class="page active" aria-labelledby="dashboard-heading">
+      <div class="page-inner">
+        <h1 id="dashboard-heading">Dashboard</h1>
+
+        <div class="stats-grid">
+          <div class="stat-card" aria-label="Total tasks">
+            <span class="stat-value" id="stat-total">0</span>
+            <span class="stat-label">Total Tasks</span>
+          </div>
+          <div class="stat-card" aria-label="Total duration">
+            <span class="stat-value" id="stat-duration">0h</span>
+            <span class="stat-label">Total Duration</span>
+          </div>
+          <div class="stat-card" aria-label="Top tag">
+            <span class="stat-value" id="stat-top-tag">—</span>
+            <span class="stat-label">Top Tag</span>
+          </div>
+          <div class="stat-card" aria-label="Due this week">
+            <span class="stat-value" id="stat-due-week">0</span>
+            <span class="stat-label">Due This Week</span>
+          </div>
+        </div>
+
+        <!-- Cap/Target -->
+        <div class="cap-section">
+          <h2>Weekly Duration Target</h2>
+          <div class="cap-controls">
+            <label for="cap-input">Set target (minutes/week):</label>
+            <input type="number" id="cap-input" min="0" placeholder="e.g. 600" />
+            <button id="cap-save-btn" class="btn btn-secondary">Save Target</button>
+          </div>
+          <div class="cap-bar-wrap" aria-label="Duration progress">
+            <div class="cap-bar" id="cap-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+              <div class="cap-bar-fill" id="cap-bar-fill"></div>
+            </div>
+            <p class="cap-status" id="cap-status"></p>
+          </div>
+        </div>
+
+        <!-- 7-day trend chart -->
+        <div class="trend-section">
+          <h2>Last 7 Days</h2>
+          <div class="trend-chart" id="trend-chart" aria-label="Last 7 days task duration chart"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== RECORDS PAGE ===== -->
+    <section id="page-records" class="page" aria-labelledby="records-heading" hidden>
+      <div class="page-inner">
+        <h1 id="records-heading">Records</h1>
+
+        <!-- Search -->
+        <div class="search-bar">
+          <label for="search-input">Search (regex):</label>
+          <input type="text" id="search-input" placeholder="e.g. exam|assignment" aria-describedby="search-hint" />
+          <span id="search-hint" class="hint">Supports regex patterns</span>
+          <label class="checkbox-label">
+            <input type="checkbox" id="search-case" /> Case sensitive
+          </label>
+        </div>
+
+        <!-- Sort controls -->
+        <div class="sort-controls" role="group" aria-label="Sort records">
+          <span>Sort by:</span>
+          <button class="sort-btn active" data-sort="dueDate" aria-pressed="true">Date ↕</button>
+          <button class="sort-btn" data-sort="title" aria-pressed="false">Title A↕Z</button>
+          <button class="sort-btn" data-sort="duration" aria-pressed="false">Duration ↑↓</button>
+        </div>
+
+        <!-- Import/Export -->
+        <div class="io-controls">
+          <button id="export-btn" class="btn btn-secondary">Export JSON</button>
+          <label class="btn btn-secondary" for="import-file">
+            Import JSON
+            <input type="file" id="import-file" accept=".json" class="sr-only" />
+          </label>
+        </div>
+
+        <!-- Records table -->
+        <div class="table-wrap" role="region" aria-label="Tasks table" tabindex="0">
+          <table id="records-table" aria-live="polite">
+            <thead>
+              <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Due Date</th>
+                <th scope="col">Duration</th>
+                <th scope="col">Tag</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="records-tbody">
+            </tbody>
+          </table>
+          <p id="empty-msg" class="empty-msg" hidden>No tasks yet. <a href="#" data-page="add">Add your first task →</a></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== ADD/EDIT PAGE ===== -->
+    <section id="page-add" class="page" aria-labelledby="form-heading" hidden>
+      <div class="page-inner">
+        <h1 id="form-heading">Add Task</h1>
+
+        <div class="form-card" role="form" aria-label="Task form">
+          <input type="hidden" id="edit-id" />
+
+          <div class="form-group">
+            <label for="f-title">Title <span aria-hidden="true">*</span></label>
+            <input type="text" id="f-title" required aria-required="true" aria-describedby="f-title-err" placeholder="e.g. Study for Math exam" />
+            <span class="field-error" id="f-title-err" role="alert"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="f-dueDate">Due Date <span aria-hidden="true">*</span></label>
+            <input type="text" id="f-dueDate" required aria-required="true" aria-describedby="f-date-err" placeholder="YYYY-MM-DD" />
+            <span class="field-error" id="f-date-err" role="alert"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="f-duration">Duration (minutes) <span aria-hidden="true">*</span></label>
+            <input type="text" id="f-duration" required aria-required="true" aria-describedby="f-dur-err" placeholder="e.g. 90" />
+            <span class="field-error" id="f-dur-err" role="alert"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="f-tag">Tag <span aria-hidden="true">*</span></label>
+            <select id="f-tag" aria-describedby="f-tag-err">
+              <option value="">-- Select tag --</option>
+              <option value="Study">Study</option>
+              <option value="Assignment">Assignment</option>
+              <option value="Event">Event</option>
+              <option value="Personal">Personal</option>
+              <option value="Meeting">Meeting</option>
+              <option value="Other">Other</option>
+            </select>
+            <span class="field-error" id="f-tag-err" role="alert"></span>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" id="save-btn" class="btn btn-primary">Save Task</button>
+            <button type="button" id="cancel-btn" class="btn btn-ghost">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SETTINGS PAGE ===== -->
+    <section id="page-settings" class="page" aria-labelledby="settings-heading" hidden>
+      <div class="page-inner">
+        <h1 id="settings-heading">Settings</h1>
+
+        <div class="settings-card">
+          <h2>Unit Conversion</h2>
+          <p>All durations are stored in <strong>minutes</strong>. Use this to convert when viewing.</p>
+          <div class="form-group">
+            <label for="unit-pref">Display durations as:</label>
+            <select id="unit-pref">
+              <option value="minutes">Minutes</option>
+              <option value="hours">Hours</option>
+            </select>
+          </div>
+          <button id="save-settings-btn" class="btn btn-primary">Save Settings</button>
+        </div>
+
+        <div class="settings-card">
+          <h2>Manage Tags</h2>
+          <p>Default tags: Study, Assignment, Event, Personal, Meeting, Other</p>
+          <div class="form-group">
+            <label for="custom-tag">Add custom tag:</label>
+            <input type="text" id="custom-tag" placeholder="e.g. Research" aria-describedby="tag-err" />
+            <span class="field-error" id="tag-err" role="alert"></span>
+          </div>
+          <button id="add-tag-btn" class="btn btn-secondary">Add Tag</button>
+          <ul id="custom-tags-list" class="tags-list" aria-label="Custom tags"></ul>
+        </div>
+
+        <div class="settings-card danger-zone">
+          <h2>Danger Zone</h2>
+          <button id="clear-data-btn" class="btn btn-danger">Clear All Data</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== ABOUT PAGE ===== -->
+    <section id="page-about" class="page" aria-labelledby="about-heading" hidden>
+      <div class="page-inner">
+        <h1 id="about-heading">About</h1>
+        <div class="about-card">
+          <p class="about-desc">Campus Life Planner helps ALU students track tasks, assignments, and events — with smart search, duration tracking, and a clean dashboard to stay on top of campus life.</p>
+          <h2>Contact</h2>
+          <ul class="contact-list">
+            <li><a href="https://github.com/mucyo-7" target="_blank" rel="noopener">GitHub: mucyo-7</a></li>
+            <li><a href="mailto:your@email.com">Email: your@email.com</a></li>
+          </ul>
+          <h2>Built with</h2>
+          <p>Vanilla HTML, CSS, and JavaScript — no frameworks.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2025 Campus Life Planner · ALU Summative Project</p>
+  </footer>
+
+  <script type="module" src="scripts/storage.js"></script>
+  <script type="module" src="scripts/state.js"></script>
+  <script type="module" src="scripts/validators.js"></script>
+  <script type="module" src="scripts/search.js"></script>
+  <script type="module" src="scripts/ui.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tests — Campus Life Planner</title>
+  <style>
+    body { font-family: system-ui, sans-serif; background: #0f1117; color: #e8eaf6; padding: 2rem; }
+    h1 { margin-bottom: 1.5rem; }
+    .suite { margin-bottom: 2rem; }
+    h2 { font-size: 1rem; color: #8b90a7; text-transform: uppercase; letter-spacing: .05em; margin-bottom: .5rem; }
+    .test { display: flex; align-items: center; gap: .75rem; padding: .4rem 0; border-bottom: 1px solid #2e3350; font-size: .9rem; }
+    .badge { padding: .15rem .6rem; border-radius: 999px; font-size: .75rem; font-weight: 700; }
+    .pass { background: #00d4aa22; color: #00d4aa; }
+    .fail { background: #ff4d6d22; color: #ff4d6d; }
+    #summary { margin-top: 2rem; font-size: 1.1rem; font-weight: 700; }
+  </style>
+</head>
+<body>
+<h1>Regex Validation Tests</h1>
+<div id="output"></div>
+<div id="summary"></div>
+
+<script type="module">
+import { validateTitle, validateDuration, validateDate, validateTag } from './scripts/validators.js';
+import { compileRegex, highlight, filterRecords } from './scripts/search.js';
+
+const results = [];
+
+function test(name, fn) {
+  try {
+    fn();
+    results.push({ name, pass: true });
+  } catch (e) {
+    results.push({ name, pass: false, err: e.message });
+  }
+}
+
+function assert(condition, msg) {
+  if (!condition) throw new Error(msg || 'Assertion failed');
+}
+
+// ---- validateTitle ----
+const T = 'validateTitle';
+test(`${T}: valid title`, () => assert(validateTitle('Study for Math exam') === null));
+test(`${T}: empty string`, () => assert(validateTitle('') !== null));
+test(`${T}: leading space`, () => assert(validateTitle(' Leading space') !== null));
+test(`${T}: trailing space`, () => assert(validateTitle('Trailing space ') !== null));
+test(`${T}: single word`, () => assert(validateTitle('Exam') === null));
+test(`${T}: duplicate word (the the)`, () => assert(validateTitle('the the exam') !== null));
+test(`${T}: over 120 chars`, () => assert(validateTitle('a'.repeat(121)) !== null));
+
+// ---- validateDuration ----
+const D = 'validateDuration';
+test(`${D}: valid integer`, () => assert(validateDuration('90') === null));
+test(`${D}: valid decimal`, () => assert(validateDuration('1.5') === null));
+test(`${D}: zero`, () => assert(validateDuration('0') !== null));
+test(`${D}: negative`, () => assert(validateDuration('-5') !== null));
+test(`${D}: letters`, () => assert(validateDuration('abc') !== null));
+test(`${D}: too many decimals`, () => assert(validateDuration('1.555') !== null));
+test(`${D}: exceeds 1440`, () => assert(validateDuration('1441') !== null));
+
+// ---- validateDate ----
+const DT = 'validateDate';
+test(`${DT}: valid date`, () => assert(validateDate('2025-10-15') === null));
+test(`${DT}: invalid month`, () => assert(validateDate('2025-13-01') !== null));
+test(`${DT}: invalid day`, () => assert(validateDate('2025-01-32') !== null));
+test(`${DT}: wrong format`, () => assert(validateDate('10/15/2025') !== null));
+test(`${DT}: empty`, () => assert(validateDate('') !== null));
+test(`${DT}: Feb 30`, () => assert(validateDate('2025-02-30') !== null));
+
+// ---- validateTag ----
+const TG = 'validateTag';
+test(`${TG}: valid tag`, () => assert(validateTag('Study') === null));
+test(`${TG}: hyphenated`, () => assert(validateTag('Self-Study') === null));
+test(`${TG}: numbers`, () => assert(validateTag('Tag1') !== null));
+test(`${TG}: empty`, () => assert(validateTag('') !== null));
+test(`${TG}: special chars`, () => assert(validateTag('Tag!') !== null));
+
+// ---- compileRegex ----
+const R = 'compileRegex';
+test(`${R}: valid pattern`, () => assert(compileRegex('exam') instanceof RegExp));
+test(`${R}: empty returns null`, () => assert(compileRegex('') === null));
+test(`${R}: invalid pattern returns null`, () => assert(compileRegex('[invalid') === null));
+test(`${R}: case-insensitive default`, () => {
+  const re = compileRegex('exam');
+  assert(re.test('EXAM'));
+});
+test(`${R}: case-sensitive flag`, () => {
+  const re = compileRegex('exam', true);
+  assert(!re.test('EXAM'));
+});
+
+// ---- highlight ----
+const H = 'highlight';
+test(`${H}: wraps match in mark`, () => {
+  const re = compileRegex('exam');
+  assert(highlight('Study exam', re).includes('<mark>'));
+});
+test(`${H}: no match returns escaped text`, () => {
+  const re = compileRegex('xyz');
+  assert(highlight('Study exam', re) === 'Study exam');
+});
+test(`${H}: escapes HTML`, () => {
+  assert(highlight('<script>', null).includes('&lt;'));
+});
+
+// ---- filterRecords ----
+const FR = 'filterRecords';
+const recs = [
+  { id: 'rec_0001', title: 'Math exam', tag: 'Study', dueDate: '2025-10-01', duration: 60 },
+  { id: 'rec_0002', title: 'Team meeting', tag: 'Meeting', dueDate: '2025-10-02', duration: 30 },
+];
+test(`${FR}: filters by title`, () => {
+  const re = compileRegex('math');
+  assert(filterRecords(recs, re).length === 1);
+});
+test(`${FR}: filters by tag`, () => {
+  const re = compileRegex('meeting');
+  assert(filterRecords(recs, re)[0].id === 'rec_0002');
+});
+test(`${FR}: null regex returns all`, () => {
+  assert(filterRecords(recs, null).length === 2);
+});
+
+// ---- Render ----
+const out = document.getElementById('output');
+const suites = {};
+results.forEach(r => {
+  const [suite] = r.name.split(':');
+  if (!suites[suite]) suites[suite] = [];
+  suites[suite].push(r);
+});
+
+Object.entries(suites).forEach(([name, tests]) => {
+  const div = document.createElement('div');
+  div.className = 'suite';
+  div.innerHTML = `<h2>${name}</h2>`;
+  tests.forEach(t => {
+    const row = document.createElement('div');
+    row.className = 'test';
+    row.innerHTML = `
+      <span class="badge ${t.pass ? 'pass' : 'fail'}">${t.pass ? 'PASS' : 'FAIL'}</span>
+      <span>${t.name.split(':')[1]?.trim() || t.name}</span>
+      ${!t.pass ? `<span style="color:#ff4d6d;font-size:.8rem">${t.err}</span>` : ''}
+    `;
+    div.appendChild(row);
+  });
+  out.appendChild(div);
+});
+
+const passed = results.filter(r => r.pass).length;
+const total = results.length;
+document.getElementById('summary').textContent =
+  `${passed} / ${total} tests passed ${passed === total ? '✅' : '❌'}`;
+</script>
+</body>
+</html>
