@@ -1,6 +1,6 @@
-# Campus Life Planner
+# Campus Life Planne
 
-ALU Summative - Campus Life Planner web app
+Campus Life Planner web app
 
 🌐 **Live site:** https://mucyo-7.github.io/campus-life-planner
 
