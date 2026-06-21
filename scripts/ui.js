@@ -222,7 +222,7 @@ function syncTagOptions(customTags) {
 document.addEventListener('DOMContentLoaded', () => {
 
   // --- Nav links ---
-  document.querySelectorAll('.nav-link, [data-page]').forEach(link => {
+document.querySelectorAll('.nav-link').forEach(link => {
     link.addEventListener('click', e => {
       e.preventDefault();
       const page = link.getAttribute('data-page');
